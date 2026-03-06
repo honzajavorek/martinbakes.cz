@@ -1,15 +1,337 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Narozeninový dárek</title>
     <style>
-      html, body {
+      @font-face {
+        font-family: "Pacifico";
+        src: url("assets/fonts/pacifico/Pacifico-Regular.ttf") format("truetype");
+        font-display: swap;
+      }
+
+      :root {
+        --bg-1: #0f172a;
+        --bg-2: #1e293b;
+        --accent-dark: #d97706;
+        --box-red: #b91c1c;
+        --box-red-dark: #991b1b;
+        --coupon: #fffbeb;
+        --ink: #111827;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
         padding: 0;
         margin: 0;
+        min-height: 100%;
+        font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #fff;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        background:
+          linear-gradient(
+            to bottom,
+            #0b1f4d 0%,
+            #0b1f4d 50%,
+            transparent 50%,
+            transparent 100%
+          ),
+          repeating-linear-gradient(
+            to bottom,
+            #0b1f4d 0px,
+            #0b1f4d 24px,
+            #f8fafc 24px,
+            #f8fafc 48px
+          );
+      }
+
+      .page {
+        width: min(100%, 64rem);
+        min-height: 100dvh;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        padding: 2rem 1rem 2.5rem;
+      }
+
+      .title {
+        margin: 0;
+        text-align: center;
+        font-size: clamp(2.4rem, 9vw, 4.6rem);
+        font-weight: 800;
+        font-family: "Pacifico", cursive;
+        letter-spacing: 0.03em;
+        text-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+      }
+
+      .gift-stage {
+        display: grid;
+        place-items: center;
+        padding-top: 1rem;
+      }
+
+      .gift-button {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .gift {
+        width: min(90vw, 23rem);
+        position: relative;
+        display: grid;
+        place-items: center;
+        animation: gift-idle 2.8s ease-in-out infinite;
+      }
+
+      .gift.opened {
+        animation: none;
+      }
+
+      @keyframes gift-idle {
+        0%,
+        62%,
+        100% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+
+        66% {
+          transform: translateY(-0.15rem) rotate(-1deg) scale(1.01);
+        }
+
+        70% {
+          transform: translateY(0) rotate(1deg) scale(1.01);
+        }
+
+        74% {
+          transform: translateY(-0.12rem) rotate(-0.8deg) scale(1.008);
+        }
+
+        78% {
+          transform: translateY(0) rotate(0.8deg) scale(1.008);
+        }
+
+        83% {
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .gift {
+          animation: none;
+        }
+      }
+
+      .gift-lid {
+        width: 104%;
+        height: 3.1rem;
+        border-radius: 0.5rem;
+        background: #dc2626;
+        border: none;
+        position: absolute;
+        top: 0.2rem;
+        left: 50%;
+        z-index: 3;
+        transform-origin: left center;
+        transform: translateX(-50%);
+        transition: transform 700ms ease, opacity 500ms ease;
+      }
+
+      .gift-lid::before {
+        content: "";
+        position: absolute;
+        width: 2.2rem;
+        height: 100%;
+        left: calc(50% - 1.1rem);
+        top: 0;
+        background: #f59e0b;
+      }
+
+      .lid-bow {
+        position: absolute;
+        left: 50%;
+        top: -3.4rem;
+        width: 4rem;
+        height: 4rem;
+        background: #f59e0b;
+        border-radius: 50%;
+        transform: translateX(-50%);
+      }
+
+      .lid-bow::before,
+      .lid-bow::after {
+        content: "";
+        position: absolute;
+        top: 0.35rem;
+        width: 5.2rem;
+        height: 3.4rem;
+        background: #f59e0b;
+        border-radius: 70% 65% 65% 70%;
+      }
+
+      .lid-bow::before {
+        right: 1.95rem;
+        transform: rotate(24deg);
+      }
+
+      .lid-bow::after {
+        left: 1.95rem;
+        transform: rotate(-24deg);
+      }
+
+      .gift-box {
+        width: 88%;
+        min-height: 17rem;
+        margin-top: 2.1rem;
+        border-radius: 0.8rem;
+        background: #b91c1c;
+        border: none;
+        box-shadow: none;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        padding: 0.95rem;
+      }
+
+      .ribbon-v {
+        position: absolute;
+        background: #f59e0b;
+      }
+
+      .ribbon-v {
+        width: 2.2rem;
+        height: 100%;
+        left: calc(50% - 1.1rem);
+      }
+
+      .coupon {
+        width: 94%;
+        min-height: 12.2rem;
+        border-radius: 0.8rem;
+        background: var(--coupon);
+        color: var(--ink);
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 0.45rem;
+        padding: 1.2rem 1rem;
+        transform: translateY(1rem) scale(0.96);
+        opacity: 0;
+        transition: transform 550ms ease 120ms, opacity 450ms ease 120ms;
+        z-index: 2;
+        text-align: center;
+      }
+
+      .coupon-text {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: clamp(1rem, 3.4vw, 1.35rem);
+        font-weight: 500;
+        line-height: 1.25;
+      }
+
+      .coupon-text strong {
+        font-weight: 800;
+      }
+
+      .coupon img {
+        width: min(74%, 13rem);
+        height: auto;
+        display: block;
+        margin-top: 0.8rem;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .coupon-link {
+        display: inline-block;
+        justify-self: center;
+        pointer-events: none;
+      }
+
+      .opened .coupon-link {
+        pointer-events: auto;
+      }
+
+      .opened .gift-lid {
+        transform: translateX(-50%) translateY(-4.8rem) rotate(-18deg);
+        opacity: 0.15;
+      }
+
+      .opened .coupon {
+        transform: translateY(-0.2rem) scale(1);
+        opacity: 1;
+      }
+
+      @media (min-width: 768px) {
+        .page {
+          padding-top: 2.8rem;
+        }
+
+        .gift {
+          width: min(44vw, 26rem);
+        }
+
+        .gift-box {
+          min-height: 18.4rem;
+        }
       }
     </style>
   </head>
   <body>
+    <main class="page">
+      <h1 class="title">Všechno nejlepší!</h1>
+      <section class="gift-stage" aria-label="Narozeninový dárek">
+        <button class="gift-button" id="giftTrigger" aria-expanded="false" aria-label="Otevři svůj narozeninový dárek">
+          <div class="gift" id="giftBox">
+            <div class="gift-lid" aria-hidden="true">
+              <span class="lid-bow"></span>
+            </div>
+            <div class="gift-box" aria-hidden="true">
+              <div class="ribbon-v"></div>
+              <div class="coupon" role="img" aria-label="Roční předplatné na hudbu, zvukové efekty, videomateriál a LUTy pro vymazlenější videoprodukci">
+                <p class="coupon-text">Roční předplatné na <strong>hudbu, zvukové efekty, videomateriál a LUTy</strong> pro vymazlenější videoprodukci!</p>
+                <a class="coupon-link" href="https://uppbeat.io/" target="_blank" rel="noopener noreferrer" aria-label="Otevřít Uppbeat.io" tabindex="-1">
+                  <img src="assets/uppbeat-logo.png" alt="Logo Uppbeat" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </button>
+      </section>
+    </main>
+
+    <script>
+      const giftTrigger = document.getElementById("giftTrigger");
+      const giftBox = document.getElementById("giftBox");
+      const couponLink = document.querySelector(".coupon-link");
+
+      giftTrigger.addEventListener("click", () => {
+        giftBox.classList.toggle("opened");
+        const isOpen = giftBox.classList.contains("opened");
+        giftTrigger.setAttribute("aria-expanded", String(isOpen));
+        couponLink.setAttribute("tabindex", isOpen ? "0" : "-1");
+      });
+
+      couponLink.addEventListener("click", (event) => {
+        if (!giftBox.classList.contains("opened")) {
+          event.preventDefault();
+          return;
+        }
+
+        event.stopPropagation();
+      });
+    </script>
   </body>
 </html>
